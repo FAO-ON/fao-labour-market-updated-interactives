@@ -138,11 +138,11 @@
     runtime.module(define, name => {
         if (name === "viewof filtered2") {
             //Change the display of the image to none
-            document.querySelector("#fig3-3-image img").style.display = "none";
+            document.querySelector("#fig1-image img").style.display = "none";
             const div = document.createElement("div");
             div.id = "filtered2-container";
             // Insert the new div element after the image
-            document.querySelector("#fig3-3-image img").insertAdjacentElement('afterend', div);
+            document.querySelector("#fig1-image img").insertAdjacentElement('afterend', div);
             const filtered2 = document.querySelector("#filtered2-container");
             const inspector = new Inspector(filtered2);
             return inspector;
@@ -159,11 +159,11 @@
     });
     </script>
 <body>
-<div class="report-chart" id="fig1-1-image">
+<div class="report-chart" id="fig1-image">
     <p class="title"><span>Figure 1</span> </br> L’Ontario a gagné 183 200 emplois en 2023</p>
     <img src="/web/default/files/publications/FA2207%20School%20Board%20Funding/fig9.png" style="width: 100%; max-width: 100%;" />
     <p class="source">Source: Statistique Canada : Enquête sur la population active : Tableau 14-10-0327-01.</p>
-    <p class="alt-text-link"><a href="#fig1_1">Accessible version</a></p>
+    <p class="alt-text-link"><a href="#fig1">Accessible version</a></p>
 </div>
 </body>
 </html>
