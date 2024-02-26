@@ -132,19 +132,19 @@ function _1(md){return(
       </style>`
     )}
     
-    function _year_vs_employmentchange(fig1){return(
-    fig1.map(d => Object.keys(d).slice(1).map(k => ({Type: "Year vs Employment Change", Year: k.toString(), "Change": +d[k]})))[0]
+    function _year_vs_employmentVariation(fig1){return(
+    fig1.map(d => Object.keys(d).slice(1).map(k => ({Type: "Variation de l'emploi", Year: k.toString(), "Variation": +d[k]})))[0]
     )}
     
-    function _combined(year_vs_employmentchange,year_vs_unemploymentrate){return(
-    year_vs_employmentchange.map((d, i) => ({...d, "Unemployment Rate": +[year_vs_unemploymentrate[i].Change], "y": (d.Change+ year_vs_unemploymentrate[i].Change*3)/2}))
+    function _combined(year_vs_employmentVariation,year_vs_unemploymentrate){return(
+    year_vs_employmentVariation.map((d, i) => ({...d, "Taux de chômage": +[year_vs_unemploymentrate[i].Variation], "y": (d.Variation+ year_vs_unemploymentrate[i].Variation*3)/2}))
     )}
     
     function _year_vs_unemploymentrate(fig1){return(
-    fig1.map(d => Object.keys(d).slice(1).map(k => ({Type: "Year vs Unemployment Rate", Year: k.toString(), "Change": +d[k]/100})))[1]
+    fig1.map(d => Object.keys(d).slice(1).map(k => ({Type: "Taux de chômage", Year: k.toString(), "Variation": +d[k]/100})))[1]
     )}
     
-    function _plot(Plot,year_vs_unemploymentrate,year_vs_employmentchange){return(
+    function _plot(Plot,year_vs_unemploymentrate,year_vs_employmentVariation){return(
     Plot.plot({
                         width: 1000,
                         height: 600,
@@ -154,7 +154,7 @@ function _1(md){return(
        x:{type: "band", label: "Year", domain: year_vs_unemploymentrate.map(d => d.Year), padding: 0.2},
             y:{axis: "left", label:"", labelArrow: "none", domain: [-400,400], nice: true, line: true},
             marks:[
-                Plot.barY(year_vs_employmentchange, {x: "Year", y: "Change", fill: '#9ec2f5'}),
+                Plot.barY(year_vs_employmentVariation, {x: "Year", y: "Variation", fill: '#9ec2f5'}),
                 
                 () => 
                     Plot.plot({
@@ -168,13 +168,13 @@ function _1(md){return(
                         x:{type: "band", label: "", domain: year_vs_unemploymentrate.map(d => d.Year), padding: 0.2, tickFormat: d => null},
                         y:{axis: "right", label: "", labelArrow: "none", domain: [0,12], nice: true, line: true},
                         marks:[
-                            Plot.line(year_vs_unemploymentrate, {x: "Year", y: "Change", stroke: '#0f60d5', strokeWidth: 5}),                    
+                            Plot.line(year_vs_unemploymentrate, {x: "Year", y: "Variation", stroke: '#0f60d5', strokeWidth: 5}),                    
                         ],
                     })
                 
                 
             ],
-            color: {legend: true, domain:["Year vs Employment Change", "Year vs Unemployment Rate"], range: ['#9ec2f5', '#0f60d5']},
+            color: {legend: true, domain:["Year vs Variation de l'emploi", "Year vs Taux de chômage"], range: ['#9ec2f5', '#0f60d5']},
     
     })
     )}
@@ -193,7 +193,7 @@ function _1(md){return(
     )}
     
     function _domain(){return(
-    ["Year vs Employment Change", "Year vs Unemployment Rate" ]
+    ["Variation de l'emploi", "Taux de chômage" ]
     )}
     
     function _range(){return(
@@ -204,7 +204,7 @@ function _1(md){return(
     filterLegend(domain, range)
     )}
     
-    function _fig1_plot(Plot,year_vs_unemploymentrate,year_vs_employmentchange,filtered2,combined,domain,range){return(
+    function _fig1_plot(Plot,year_vs_unemploymentrate,year_vs_employmentVariation,filtered2,combined,domain,range){return(
     Plot.plot({
       width: 1300,
       height: 600,
@@ -216,9 +216,9 @@ function _1(md){return(
         // Display tick label for every other year
         return i % 2 === 0 ? d : "";
       } },
-      y: { ticks: 9, axis: "left", label: "Change in Employment (Thousands)", labelArrow: "none", domain: [-400, 400], nice: true, line: true },
+      y: { ticks: 9, axis: "left", label: "Variation de l'emploi (en milliers)", labelArrow: "none", domain: [-400, 400], nice: true, line: true },
       marks: [
-        Plot.barY(year_vs_employmentchange.filter(({ Type }) => filtered2.includes(Type)), { x: "Year", y: "Change", fill: '#9ec2f5' }),
+        Plot.barY(year_vs_employmentVariation.filter(({ Type }) => filtered2.includes(Type)), { x: "Year", y: "Variation", fill: '#9ec2f5' }),
     
         () => Plot.plot({
           width: 1300,
@@ -228,19 +228,19 @@ function _1(md){return(
           marginBottom: 80,
           className: "labour-market-chart",
           x: { ticks: 24, type: "band", label: "", domain: year_vs_unemploymentrate.map(d => d.Year), padding: 0.2, tickFormat: d => null },
-          y: { ticks: 7, axis: "right", labelArrow: "none", label: "Unemployment Rate (Per Cent)", percent: true, domain: [0,12.0], tickFormat: d => d.toFixed(1)},
+          y: { ticks: 7, axis: "right", labelArrow: "none", label: "Taux de chômage (en pourcentage)", percent: true, domain: [0,12.0], tickFormat: d => d.toFixed(1)},
           marks: [
-            Plot.line(year_vs_unemploymentrate.filter(({ Type }) => filtered2.includes(Type)), { x: "Year", y: "Change", stroke: '#0f60d5', strokeWidth: 5 }),
+            Plot.line(year_vs_unemploymentrate.filter(({ Type }) => filtered2.includes(Type)), { x: "Year", y: "Variation", stroke: '#0f60d5', strokeWidth: 5 }),
             Plot.tip(combined, Plot.pointerX({
                 x: (combined) => combined["Year"], // Set the x position of the tooltip
                 y: (combined) => {
-                  if (filtered2.includes("Year vs Unemployment Rate") && !(filtered2.includes("Year vs Employment Change"))) {
-                    return combined["Unemployment Rate"]; // Set the y position based on the active plot
+                  if (filtered2.includes("Taux de chômage") && !(filtered2.includes("Variation de l'emploi"))) {
+                    return combined["Taux de chômage"]; // Set the y position based on the active plot
                   } 
             },
             title: (combined) => {
              
-              let tooltipContent = `Year: ${combined["Year"]}\nUnemployment Rate: ${Intl.NumberFormat('en-CA', {maximumSignificantDigits: 2}).format(combined["Unemployment Rate"]*100)}%`;
+              let tooltipContent = `Année: ${combined["Year"]}\nTaux de chômage: ${Intl.NumberFormat('fr-CA', {maximumSignificantDigits: 2}).format(combined["Taux de chômage"]*100)}%`;
               return tooltipContent;
             },
             lineWidth: 1000
@@ -250,30 +250,34 @@ function _1(md){return(
         Plot.tip(combined, Plot.pointerX({
           x: (combined) => combined["Year"], // Set the x position of the tooltip
           y: (combined) => {
-            if (filtered2.includes("Year vs Employment Change") && filtered2.includes("Year vs Unemployment Rate")) {
+            if (filtered2.includes("Variation de l'emploi") && filtered2.includes("Taux de chômage")) {
               return combined["y"]; // Set the y position based on the active plot
-            } else if (filtered2.includes("Year vs Employment Change")) {
-              return combined["Change"]; // Set the y position based on the active plot
+            } else if (filtered2.includes("Variation de l'emploi")) {
+              return combined["Variation"]; // Set the y position based on the active plot
             }
       },
       title: (combined) => {
-        const yearVsEmploymentChangeActive = filtered2.includes("Year vs Employment Change");
-        const yearVsUnemploymentRateActive = filtered2.includes("Year vs Unemployment Rate");
+        const yearVsEmploymentVariationActive = filtered2.includes("Variation de l'emploi");
+        const yearVsUnemploymentRateActive = filtered2.includes("Taux de chômage");
     
         let tooltipContent = "";
-        if (yearVsEmploymentChangeActive && yearVsUnemploymentRateActive) {
-          tooltipContent ="Year: " + `${combined["Year"]}` + "\n" +"Type: Year vs Employment Change" + '\n' + "Employment Change: " + `${Intl.NumberFormat('en-CA', { maximumSignificantDigits: 3 }).format(
-        combined["Change"]*1000,
-      )}` + "" +'\n' + '\n'+"Type: Year vs Unemployment Change" + "\n" + "Unemployment Change: " + `${Intl.NumberFormat('en-CA', {maximumSignificantDigits: 2}).format(combined["Unemployment Rate"]*100)}` + "%";
+        if (yearVsEmploymentVariationActive && yearVsUnemploymentRateActive) {
+          tooltipContent ="Année: " + `${combined["Year"]}` + "\n"  + "Variation de l'emploi : " + `${Intl.NumberFormat('fr-CA', {  style: 'decimal',
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0, }).format(
+        (combined["Variation"]*1000),
+      )}` + "" +'\n' + "Taux de chômage : " + `${Intl.NumberFormat('fr-CA', {maximumSignificantDigits: 2}).format(combined["Taux de chômage"]*100)}` + "%";
         } 
-        else if(yearVsEmploymentChangeActive){
-          tooltipContent = `Year: ${combined["Year"]}\nEmployment Change: ${Intl.NumberFormat('en-CA', { maximumSignificantDigits: 3 }).format(
-        combined["Change"],
+        else if(yearVsEmploymentVariationActive){
+          tooltipContent = `Année: ${combined["Year"]}\nVariation de l'emploi : ${Intl.NumberFormat('fr-CA', { style: 'decimal',
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0, }).format(
+           (combined["Variation"]*1000),
       )}`;
         }
         
         //else {
-          //tooltipContent = `Year: ${combined["Year"]}\nUnemployment Rate: ${combined["Unemployment Rate"]}%`;
+          //tooltipContent = `Year: ${combined["Year"]}\nTaux de chômage: ${combined["Taux de chômage"]}%`;
         //}
         return tooltipContent;
       },
@@ -289,7 +293,7 @@ function _1(md){return(
     md`A More conventional method (possibly?)`
     )}
     
-    function _fig1_plot_test(Plot,year_vs_unemploymentrate,dualAxisY,year_vs_employmentchange,filtered2){return(
+    function _fig1_plot_test(Plot,year_vs_unemploymentrate,dualAxisY,year_vs_employmentVariation,filtered2){return(
     Plot.plot({
       width: 1300,
       height: 600,
@@ -299,12 +303,12 @@ function _1(md){return(
       className: "labour-market-chart",
       x: { tickRotate: 270, type: "band", label: "Year", domain: year_vs_unemploymentrate.map(d => d.Year), padding: 0.2 },
       marks:[
-        dualAxisY(year_vs_employmentchange, {y: "Change", anchor: "left"}),
-        dualAxisY(year_vs_unemploymentrate, {y: "Change", anchor: "right"}),
+        dualAxisY(year_vs_employmentVariation, {y: "Variation", anchor: "left"}),
+        dualAxisY(year_vs_unemploymentrate, {y: "Variation", anchor: "right"}),
         Plot.barY(
-      year_vs_employmentchange.filter(({ Type }) => filtered2.includes(Type)), Plot.normalizeY("extent", { x: "Year", y: "Change", fill: '#9ec2f5', tip: true }), // Set the yAxis attribute to "left"
+      year_vs_employmentVariation.filter(({ Type }) => filtered2.includes(Type)), Plot.normalizeY("extent", { x: "Year", y: "Variation", fill: '#9ec2f5', tip: true }), // Set the yAxis attribute to "left"
     ),
-        Plot.line(year_vs_unemploymentrate.filter(({ Type }) => filtered2.includes(Type)), Plot.normalizeY("extent", { x: "Year", y: "Change", stroke: '#0f60d5', strokeWidth: 5, yAxis: "right" })),
+        Plot.line(year_vs_unemploymentrate.filter(({ Type }) => filtered2.includes(Type)), Plot.normalizeY("extent", { x: "Year", y: "Variation", stroke: '#0f60d5', strokeWidth: 5, yAxis: "right" })),
     
         
       ]
@@ -347,15 +351,15 @@ function _1(md){return(
       const main = runtime.module();
       main.define("module 1", async () => runtime.module((await import("./runtime.js")).default));
       const fileAttachments = new Map([
-        ["fig1.csv", {url: "files/fig1.csv", mimeType: "text/csv"}]
+        ["fig1.csv", {url: "/files/fig1_fr.csv", mimeType: "text/csv"}]
       ]);
       main.builtin("FileAttachment", runtime.fileAttachments(name => fileAttachments.get(name)));
       main.variable(observer()).define(["md"], _1);
       main.variable(observer()).define(["htl"], _2);
-      main.variable(observer("year_vs_employmentchange")).define("year_vs_employmentchange", ["fig1"], _year_vs_employmentchange);
-      main.variable(observer("combined")).define("combined", ["year_vs_employmentchange","year_vs_unemploymentrate"], _combined);
+      main.variable(observer("year_vs_employmentVariation")).define("year_vs_employmentVariation", ["fig1"], _year_vs_employmentVariation);
+      main.variable(observer("combined")).define("combined", ["year_vs_employmentVariation","year_vs_unemploymentrate"], _combined);
       main.variable(observer("year_vs_unemploymentrate")).define("year_vs_unemploymentrate", ["fig1"], _year_vs_unemploymentrate);
-      main.variable(observer("plot")).define("plot", ["Plot","year_vs_unemploymentrate","year_vs_employmentchange"], _plot);
+      main.variable(observer("plot")).define("plot", ["Plot","year_vs_unemploymentrate","year_vs_employmentVariation"], _plot);
       main.variable(observer("color")).define("color", ["plot"], _color);
       main.variable(observer("viewof filtered")).define("viewof filtered", ["Inputs","color","htl","styles"], _filtered);
       main.variable(observer("filtered")).define("filtered", ["Generators", "viewof filtered"], (G, _) => G.input(_));
@@ -363,9 +367,9 @@ function _1(md){return(
       main.variable(observer("range")).define("range", _range);
       main.variable(observer("viewof filtered2")).define("viewof filtered2", ["filterLegend","domain","range"], _filtered2);
       main.variable(observer("filtered2")).define("filtered2", ["Generators", "viewof filtered2"], (G, _) => G.input(_));
-      main.variable(observer("fig1_plot")).define("fig1_plot", ["Plot","year_vs_unemploymentrate","year_vs_employmentchange","filtered2","combined","domain","range"], _fig1_plot);
+      main.variable(observer("fig1_plot")).define("fig1_plot", ["Plot","year_vs_unemploymentrate","year_vs_employmentVariation","filtered2","combined","domain","range"], _fig1_plot);
       main.variable(observer()).define(["md"], _13);
-      main.variable(observer("fig1_plot_test")).define("fig1_plot_test", ["Plot","year_vs_unemploymentrate","dualAxisY","year_vs_employmentchange","filtered2"], _fig1_plot_test);
+      main.variable(observer("fig1_plot_test")).define("fig1_plot_test", ["Plot","year_vs_unemploymentrate","dualAxisY","year_vs_employmentVariation","filtered2"], _fig1_plot_test);
       main.variable(observer("dualAxisY")).define("dualAxisY", ["d3","Plot"], _dualAxisY);
       main.variable(observer("filterLegend")).define("filterLegend", ["set","htl"], _filterLegend);
       main.variable(observer("styles")).define("styles", _styles);
